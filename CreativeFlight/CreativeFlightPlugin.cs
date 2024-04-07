@@ -13,7 +13,7 @@ namespace CreativeFlight
     {
         private const string MyGUID = "com.equinox.CreativeFlight";
         private const string PluginName = "CreativeFlight";
-        private const string VersionString = "0.2.0";
+        private const string VersionString = "1.0.0";
         private static readonly Harmony Harmony = new Harmony(MyGUID);
         public static ManualLogSource Log = new ManualLogSource(PluginName);
 
