@@ -47,6 +47,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\Techtonica\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="EquinoxsModUtils">
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\Techtonica\BepInEx\plugins\EquinoxsModUtils\EquinoxsModUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\Techtonica\Techtonica_Data\Managed\Rewired_Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -63,8 +70,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\Techtonica\Techtonica_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.InputModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\Techtonica\Techtonica_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jetpack.cs" />
     <Compile Include="Patches\PlayerFirstPersonControllerPatch.cs" />
     <Compile Include="CreativeFlightPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,7 +84,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir "D:\ steam\steamapps\common\Techtonica\BepInEx\plugins\$(TargetName)"
-xcopy /q/y/i "$(TargetPath)" "D:\ steam\steamapps\common\Techtonica\BepInEx\plugins\$(TargetName)" /E /H /C</PostBuildEvent>
+    <PostBuildEvent>mkdir "C:\SteamLibrary\steamapps\common\Techtonica\BepInEx\plugins\$(TargetName)"
+xcopy /q/y/i "$(TargetPath)" "C:\SteamLibrary\steamapps\common\Techtonica\BepInEx\plugins\$(TargetName)" /E /H /C</PostBuildEvent>
   </PropertyGroup>
 </Project>
