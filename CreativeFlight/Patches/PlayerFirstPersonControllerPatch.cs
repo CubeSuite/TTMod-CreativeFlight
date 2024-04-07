@@ -9,69 +9,73 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Rewired;
+using EquinoxsModUtils;
+using UnityEngine.Windows;
+using BepInEx;
 
 namespace CreativeFlight.Patches
 {
     internal class PlayerFirstPersonControllerPatch
     {
-        public static DateTime lastDescendPress = DateTime.Now;
+        // Objects & Variables
+        private static bool ascend => UnityInput.Current.GetKey(KeyCode.Space);
+        private static bool descend => UnityInput.Current.GetKey(KeyCode.C);
+        private static float hThrust => CreativeFlightPlugin.HorizontalThrust.Value;
+        private static float vThrust => CreativeFlightPlugin.VerticalThrust.Value;
+        private static float friction => CreativeFlightPlugin.Friction.Value;
+
+        [HarmonyPatch(typeof(PlayerFirstPersonController), "CalculateHorizontalMovement")]
+        [HarmonyPrefix]
+        private static bool RecalcHorizontalMovement(PlayerFirstPersonController __instance) {
+            if (ShouldUseDefault(__instance)) return true;
+
+            float speed = (float)ModUtils.GetPrivateField("m_HorizontalSpeed", Player.instance.fpcontroller);
+            speed *= 1 - friction;
+
+            if (UnityInput.Current.GetKey(KeyCode.W) || UnityInput.Current.GetKey(KeyCode.S) ||
+                UnityInput.Current.GetKey(KeyCode.A) || UnityInput.Current.GetKey(KeyCode.D)) {
+                speed += hThrust;
+            }
+
+            Vector3 forward = __instance.cam.transform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            Vector2 moveAxes = InputHandler.instance.MoveAxes;
+            Vector3 hMove = Quaternion.LookRotation(forward, Vector3.up) * new Vector3(moveAxes.x, 0, moveAxes.y) * speed;
+            ModUtils.SetPrivateField("m_DesiredHorizontalVelocity", Player.instance.fpcontroller, hMove);
+            return false;
+        }
+
+        [HarmonyPatch(typeof(PlayerFirstPersonController), "CalculateVerticalMovement")]
+        [HarmonyPrefix]
+        private static bool RecalcVerticalMovement(PlayerFirstPersonController __instance) {
+            if (ShouldUseDefault(__instance)) return true;
+
+            float speed = (float)ModUtils.GetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller);
+            speed *=  1 - friction;
+
+            if (ascend) speed += vThrust * Time.deltaTime;
+            if (descend) speed -= vThrust * Time.deltaTime;
+            
+            ModUtils.SetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller, speed);
+            return false;
+        }
+
+        private static bool ShouldUseDefault(PlayerFirstPersonController __instance) {
+            if (!CreativeFlightPlugin.isEnabled) return true;
+            PlayerFirstPersonController.ControlState controlState = (PlayerFirstPersonController.ControlState)ModUtils.GetPrivateField("curControls", __instance);
+            if (controlState == PlayerFirstPersonController.ControlState.RAIL_RUNNER) return true;
+            if (!Jetpack.isFlying) return true;
+
+            return false;
+        }
 
         [HarmonyPatch(typeof(PlayerFirstPersonController), "UpdateHoverPackStatus")]
         [HarmonyPrefix]
-        public static void AdjustStiltsHeight(PlayerFirstPersonController __instance) {
-            if (!CreativeFlightPlugin.isEnabled) return;
-            Type playerType = typeof(PlayerFirstPersonController);
-            PropertyInfo hoverPackActiveProperty = playerType.GetProperty("hoverPackActive", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            Stilts hoverPack = Player.instance.equipment.hoverPack;
-            Type hoverPackType = hoverPack.GetType();
-            FieldInfo stiltsHeightField = hoverPackType.GetField("_stiltHeight", BindingFlags.Instance | BindingFlags.NonPublic);
-            FieldInfo stiltThresholdCloseField = hoverPackType.GetField("_stiltThresholdClose", BindingFlags.Instance | BindingFlags.NonPublic);
-            stiltThresholdCloseField.SetValue(hoverPack, 0);
-
-            if (hoverPackActiveProperty != null && (bool)hoverPackActiveProperty.GetValue(__instance, null)) {
-                float speed = CreativeFlightPlugin.VerticalSpeed.Value;
-
-                if (CreativeFlightPlugin.AscendShortcut.Value.IsPressed()) {
-                    Vector3 position = __instance.transform.position;
-                    position.y += speed;
-                    __instance.transform.position = position;
-
-                    if (stiltsHeightField != null) {
-                        float newStiltsHeightValue = (float)stiltsHeightField.GetValue(hoverPack) + speed;
-                        stiltsHeightField.SetValue(hoverPack, newStiltsHeightValue);
-                    }
-                    else {
-                        Debug.Log("_stiltsHeight field not found");
-                    }
-                }
-                else if (CreativeFlightPlugin.DescendShortcut.Value.IsPressed()) {
-                    Vector3 position = __instance.transform.position;
-                    position.y -= speed;
-                    __instance.transform.position = position;
-
-                    if (stiltsHeightField != null) {
-                        float newStiltsHeightValue = (float)stiltsHeightField.GetValue(hoverPack) - speed;
-                        if (newStiltsHeightValue < 3) newStiltsHeightValue = 3;
-                        stiltsHeightField.SetValue(hoverPack, newStiltsHeightValue);
-                    }
-                    else {
-                        Debug.Log("_stiltsHeight field not found");
-                    }
-                }
-                
-                if (CreativeFlightPlugin.DescendShortcut.Value.IsDown()) {
-                    Debug.Log("Descend Pressed");
-                    double timeBetweenPresses = (DateTime.Now - lastDescendPress).TotalMilliseconds;
-                    Debug.Log($"Time between presses: {timeBetweenPresses}");
-                    if (timeBetweenPresses < 200) {
-                        hoverPack.DeactivateStilts();
-                        stiltsHeightField.SetValue(hoverPack, 3);
-                    }
-
-                    lastDescendPress = DateTime.Now;
-                }
-            }
+        public static bool AdjustStiltsHeight(PlayerFirstPersonController __instance) {
+            if (!CreativeFlightPlugin.isEnabled) return true;
+            return false;
         }
 
         [HarmonyPatch(typeof(PlayerFirstPersonController), "DeactivateHoverPack")]
