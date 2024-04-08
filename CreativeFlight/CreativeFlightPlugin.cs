@@ -13,7 +13,7 @@ namespace CreativeFlight
     {
         private const string MyGUID = "com.equinox.CreativeFlight";
         private const string PluginName = "CreativeFlight";
-        private const string VersionString = "1.0.0";
+        private const string VersionString = "1.0.1";
         private static readonly Harmony Harmony = new Harmony(MyGUID);
         public static ManualLogSource Log = new ManualLogSource(PluginName);
 
@@ -26,7 +26,7 @@ namespace CreativeFlight
         public static ConfigEntry<float> Friction;
 
         // Objects & Variables
-        public static bool shouldDebug = true;
+        public static bool shouldDebug = false;
         public static bool isEnabled = true;
         public static float sSinceLastAscendPress;
         public static float sSinceLastDescendPress;

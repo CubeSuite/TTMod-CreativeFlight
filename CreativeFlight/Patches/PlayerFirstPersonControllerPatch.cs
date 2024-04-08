@@ -52,6 +52,8 @@ namespace CreativeFlight.Patches
         private static bool RecalcVerticalMovement(PlayerFirstPersonController __instance) {
             if (ShouldUseDefault(__instance)) return true;
 
+            ModUtils.SetPrivateField("_active", Player.instance.equipment.hoverPack, false);
+
             float speed = (float)ModUtils.GetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller);
             speed *=  1 - friction;
 
@@ -68,6 +70,15 @@ namespace CreativeFlight.Patches
             if (controlState == PlayerFirstPersonController.ControlState.RAIL_RUNNER) return true;
             if (!Jetpack.isFlying) return true;
 
+            return false;
+        }
+
+        // Blocked Functions
+
+        [HarmonyPatch(typeof(PlayerFirstPersonController), "AutoCrouch")]
+        [HarmonyPrefix]
+        private static bool BlockAutoCrouch() {
+            if (ShouldUseDefault(Player.instance.fpcontroller)) return true;
             return false;
         }
 
