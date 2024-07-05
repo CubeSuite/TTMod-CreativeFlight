@@ -19,7 +19,7 @@ namespace CreativeFlight.Patches
     {
         // Objects & Variables
         private static bool ascend => UnityInput.Current.GetKey(KeyCode.Space) && !UnityInput.Current.GetKey(KeyCode.LeftControl);
-        private static bool descend => UnityInput.Current.GetKey(KeyCode.C) && !UnityInput.Current.GetKey(KeyCode.LeftControl);
+        private static bool descend => UnityInput.Current.GetKey(CreativeFlightPlugin.DescendKey.Value) && !UnityInput.Current.GetKey(KeyCode.LeftControl);
         private static float hThrust => CreativeFlightPlugin.HorizontalThrust.Value;
         private static float vThrust => CreativeFlightPlugin.VerticalThrust.Value;
         private static float friction => CreativeFlightPlugin.Friction.Value;
