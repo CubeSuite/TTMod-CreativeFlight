@@ -49,10 +49,11 @@ namespace CreativeFlight
             sSinceLastDescendPress += Time.deltaTime;
             
             if (UnityInput.Current.GetKeyDown(KeyCode.Space)) {
-                if(sSinceLastAscendPress < doubleTapThresholdSeconds && !Jetpack.isFlying) {
-                    Jetpack.StartFlight();
+                if(sSinceLastAscendPress < doubleTapThresholdSeconds) {
+                    if (!Jetpack.isFlying) Jetpack.StartFlight();
+                    else Jetpack.StopFlight();
                 }
-                else if (sSinceLastAscendPress < 1f && sSinceLastAscendPress > doubleTapThresholdSeconds) {
+                else if (sSinceLastAscendPress < 1f) {
                     EDT.Log("Controls", $"Double space tap did not meet threshold | {sSinceLastAscendPress} > {doubleTapThresholdSeconds}");
                 }
 
