@@ -18,8 +18,8 @@ namespace CreativeFlight.Patches
     internal class PlayerFirstPersonControllerPatch
     {
         // Objects & Variables
-        private static bool ascend => UnityInput.Current.GetKey(KeyCode.Space);
-        private static bool descend => UnityInput.Current.GetKey(KeyCode.C);
+        private static bool ascend => UnityInput.Current.GetKey(KeyCode.Space) && !UnityInput.Current.GetKey(KeyCode.LeftControl);
+        private static bool descend => UnityInput.Current.GetKey(KeyCode.C) && !UnityInput.Current.GetKey(KeyCode.LeftControl);
         private static float hThrust => CreativeFlightPlugin.HorizontalThrust.Value;
         private static float vThrust => CreativeFlightPlugin.VerticalThrust.Value;
         private static float friction => CreativeFlightPlugin.Friction.Value;
