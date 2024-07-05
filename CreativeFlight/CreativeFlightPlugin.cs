@@ -26,7 +26,6 @@ namespace CreativeFlight
         public static ConfigEntry<float> Friction;
 
         // Objects & Variables
-        public static bool shouldDebug = false;
         public static bool isEnabled = true;
         public static float sSinceLastAscendPress;
         public static float sSinceLastDescendPress;
@@ -58,7 +57,7 @@ namespace CreativeFlight
 
                 sSinceLastAscendPress = 0;
             }
-            else if (UnityInput.Current.GetKeyDown(KeyCode.C)) {
+            else if (UnityInput.Current.GetKeyDown(KeyCode.C) && !UnityInput.Current.GetKeyDown(KeyCode.LeftControl)) {
                 if(sSinceLastDescendPress < doubleTapThresholdSeconds && Jetpack.isFlying) {
                     Jetpack.StopFlight();
                 }
