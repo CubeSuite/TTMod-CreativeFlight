@@ -12,6 +12,7 @@ using Rewired;
 using EquinoxsModUtils;
 using UnityEngine.Windows;
 using BepInEx;
+using EquinoxsDebuggingTools;
 
 namespace CreativeFlight.Patches
 {
@@ -35,6 +36,15 @@ namespace CreativeFlight.Patches
             if (UnityInput.Current.GetKey(KeyCode.W) || UnityInput.Current.GetKey(KeyCode.S) ||
                 UnityInput.Current.GetKey(KeyCode.A) || UnityInput.Current.GetKey(KeyCode.D)) {
                 speed += hThrust;
+            }
+
+            if (UnityInput.Current.GetKey(KeyCode.LeftShift)) {
+                float oldSpeed = speed;
+                speed *= CreativeFlightPlugin.SprintSpeed.Value / 100f;
+                EDT.PacedLog("Controls", $"User is pressing sprint > oldSpeed: {oldSpeed} , newSpeed: {speed}");
+            }
+            else {
+                EDT.PacedLog("Controls", "User is not pressing sprint");
             }
 
             Vector3 forward = __instance.cam.transform.forward;

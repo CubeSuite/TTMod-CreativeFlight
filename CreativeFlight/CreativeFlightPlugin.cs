@@ -26,6 +26,7 @@ namespace CreativeFlight
         public static ConfigEntry<float> HorizontalThrust;
         public static ConfigEntry<float> VerticalThrust;
         public static ConfigEntry<float> Friction;
+        public static ConfigEntry<int> SprintSpeed;
 
         // Objects & Variables
         public static bool isEnabled = true;
@@ -80,6 +81,7 @@ namespace CreativeFlight
             HorizontalThrust = Config.Bind("Forces", "Horizontal Thrust", 10f, new ConfigDescription("Controls horizontal acceleration while flying", new AcceptableValueRange<float>(0f, float.MaxValue)));
             VerticalThrust = Config.Bind("Forces", "Vertical Thrust", 150f, new ConfigDescription("Controls vertical acceleration while flying", new AcceptableValueRange<float>(0f, float.MaxValue)));
             Friction = Config.Bind("Forces", "Friction", 0.15f, new ConfigDescription("Controls how quickly you slow to a stop while flying", new AcceptableValueRange<float>(0.01f, 0.9f)));
+            SprintSpeed = Config.Bind("Forces", "Sprint Speed", 150, new ConfigDescription("Sprint speed as a percentage of walking speed. E.g. default '150' means 50% faster than walking.", new AcceptableValueRange<int>(100, 200)));
         }
 
         private void ApplyPatches() {
