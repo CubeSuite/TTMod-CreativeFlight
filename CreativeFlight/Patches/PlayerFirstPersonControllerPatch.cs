@@ -95,14 +95,16 @@ namespace CreativeFlight.Patches
         [HarmonyPatch(typeof(PlayerFirstPersonController), "UpdateHoverPackStatus")]
         [HarmonyPrefix]
         public static bool AdjustStiltsHeight(PlayerFirstPersonController __instance) {
-            if (!CreativeFlightPlugin.isEnabled) return true;
+            if (ShouldUseDefault(Player.instance.fpcontroller)) return true;
+            //if (!CreativeFlightPlugin.isEnabled) return true;
             return false;
         }
 
         [HarmonyPatch(typeof(PlayerFirstPersonController), "DeactivateHoverPack")]
         [HarmonyPrefix]
         public static bool BlockDeactivateHoverpack() {
-            if (!CreativeFlightPlugin.isEnabled) return true;
+            if (ShouldUseDefault(Player.instance.fpcontroller)) return true;
+            //if (!CreativeFlightPlugin.isEnabled) return true;
             return false;
         }
     }
