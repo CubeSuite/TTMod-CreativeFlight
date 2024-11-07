@@ -15,7 +15,7 @@ namespace CreativeFlight
     {
         private const string MyGUID = "com.equinox.CreativeFlight";
         private const string PluginName = "CreativeFlight";
-        private const string VersionString = "1.0.1";
+        private const string VersionString = "3.0.0";
         private static readonly Harmony Harmony = new Harmony(MyGUID);
         public static ManualLogSource Log = new ManualLogSource(PluginName);
 
@@ -48,7 +48,7 @@ namespace CreativeFlight
         }
 
         private void Update() {
-            if (!ModUtils.hasGameLoaded) return;
+            if (!EMU.LoadingStates.hasGameLoaded) return;
             
             sSinceLastAscendPress += Time.deltaTime;
             sSinceLastDescendPress += Time.deltaTime;
@@ -57,6 +57,10 @@ namespace CreativeFlight
 
             if (LandToEndFlight.Value && Jetpack.isFlying && CheckIfNearGround()) {
                 Jetpack.StopFlight();
+            }
+
+            if (Jetpack.isFlying && Player.instance.equipment.hoverPack.active) {
+                Player.instance.equipment.hoverPack.DeactivateStilts();
             }
         }
 
@@ -75,6 +79,7 @@ namespace CreativeFlight
 
         private void ApplyPatches() {
             Harmony.CreateAndPatchAll(typeof(PlayerFirstPersonControllerPatch));
+            Harmony.CreateAndPatchAll(typeof(StiltsPatch));
         }
 
         private void StartStopIfDoubleTap() {
@@ -103,7 +108,7 @@ namespace CreativeFlight
 
         private bool CheckIfNearGround() {
             PlayerFirstPersonController fpController = Player.instance.fpcontroller;
-            LayerMask groundLayer = (LayerMask)ModUtils.GetPrivateField("groundLayer", fpController);
+            LayerMask groundLayer = (LayerMask)EMU.GetPrivateField("groundLayer", fpController);
             
             if (Physics.Raycast(fpController.transform.position, Vector3.down, out RaycastHit raycastHit, 2.2f, groundLayer)) {
                 float distance = fpController.transform.position.y - raycastHit.point.y;

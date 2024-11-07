@@ -30,7 +30,7 @@ namespace CreativeFlight.Patches
         private static bool RecalcHorizontalMovement(PlayerFirstPersonController __instance) {
             if (ShouldUseDefault(__instance)) return true;
 
-            float speed = (float)ModUtils.GetPrivateField("m_HorizontalSpeed", Player.instance.fpcontroller);
+            float speed = (float)EMU.GetPrivateField("m_HorizontalSpeed", Player.instance.fpcontroller);
             speed *= 1 - friction;
 
             if (UnityInput.Current.GetKey(KeyCode.W) || UnityInput.Current.GetKey(KeyCode.S) ||
@@ -53,7 +53,7 @@ namespace CreativeFlight.Patches
 
             Vector2 moveAxes = InputHandler.instance.MoveAxes;
             Vector3 hMove = Quaternion.LookRotation(forward, Vector3.up) * new Vector3(moveAxes.x, 0, moveAxes.y) * speed;
-            ModUtils.SetPrivateField("m_DesiredHorizontalVelocity", Player.instance.fpcontroller, hMove);
+            EMU.SetPrivateField("m_DesiredHorizontalVelocity", Player.instance.fpcontroller, hMove);
             return false;
         }
 
@@ -62,21 +62,21 @@ namespace CreativeFlight.Patches
         private static bool RecalcVerticalMovement(PlayerFirstPersonController __instance) {
             if (ShouldUseDefault(__instance)) return true;
 
-            ModUtils.SetPrivateField("_active", Player.instance.equipment.hoverPack, false);
+            EMU.SetPrivateField("_active", Player.instance.equipment.hoverPack, false);
 
-            float speed = (float)ModUtils.GetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller);
+            float speed = (float)EMU.GetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller);
             speed *=  1 - friction;
 
             if (ascend) speed += vThrust * Time.deltaTime;
             if (descend) speed -= vThrust * Time.deltaTime;
             
-            ModUtils.SetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller, speed);
+            EMU.SetPrivateField("m_VerticalSpeed", Player.instance.fpcontroller, speed);
             return false;
         }
 
         private static bool ShouldUseDefault(PlayerFirstPersonController __instance) {
             if (!CreativeFlightPlugin.isEnabled) return true;
-            PlayerFirstPersonController.ControlState controlState = (PlayerFirstPersonController.ControlState)ModUtils.GetPrivateField("curControls", __instance);
+            PlayerFirstPersonController.ControlState controlState = (PlayerFirstPersonController.ControlState)EMU.GetPrivateField("curControls", __instance);
             if (controlState == PlayerFirstPersonController.ControlState.RAIL_RUNNER) return true;
             if (!Jetpack.isFlying) return true;
 
